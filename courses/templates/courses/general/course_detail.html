@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}
+  {{ course.name }}
+{% endblock %}
+
+{% block content %}
+  {% with subject=course.subject %}
+    <h1>
+      {{ course.name }}
+    </h1>
+    <div class="module">
+      <h2>Overview</h2>
+      <p>
+        <a href="{% url "course_list_by_subject" subject.slug %}">
+        {{ subject.name }}</a>.
+        {{ course.modules.count }} modules.
+        Instructor: {{ course.owner.get_full_name }}
+      </p>
+      {{ course.overview|linebreaks }}
+        {% if request.user.is_authenticated %}
+            <form action="{% url 'enrolling' %}" method = "post">
+                {{ enrollform }}
+                {% csrf_token %}
+                <input type="submit" value="Enroll now">
+            </form>
+        {% else %}
+            <a href="{% url 'registration' %}" class ="button">Register to enroll</a>
+        {% endif %}
+
+    </div>
+  {% endwith %}
+    <section class="search">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-12">
+              <div class="text-left">
+                  <h5>Просмотры: {{ views_counter }}</h5>
+                  <h3>Рейтинг: {{ mean_rating }}</h3>
+                <form action="{% url 'course_add_rating' %}" method="post">
+                    {% csrf_token %}
+                    {{ rating_form }}
+                    <input type="hidden" name="course" value="{{ course.id }}">
+                    <input class="" type="submit" value="Submit">
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+     </section>
+
+     <section class="create_review">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-6">
+              <div class="">
+                <form action="{% url 'course_add_review' %}" method="post">
+                    {% csrf_token %}
+                    {{ review_form }}
+                    <input type="hidden" name="course" value="{{ course.id }}">
+                    <input class="" type="submit" value="Оставить отзыв">
+                </form>
+              </div>
+            </div>
+              <div class="col-6">
+                  <div class="">
+                    {% for review in reviews %}
+                        <h5>{{ review.user }}</h5>
+                        <p>{{ review.text }} {{ review.date }}</p>
+                        {% if review.grade %}
+                            <h5>green</h5>
+                        {% else %}
+                            <h5>red</h5>
+                        {% endif %}
+                    {% endfor %}
+                  </div>
+              </div>
+          </div>
+        </div>
+     </section>
+
+     <section class="reviews">
+        <div class="container-fluid">
+          <div class="row">
+
+
+          </div>
+        </div>
+      </section>
+{% endblock %}

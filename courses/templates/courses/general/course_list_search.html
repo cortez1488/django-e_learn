@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Searching
+{% endblock %}
+
+{% block content %}
+    {% if search_string == "" %}
+        <h1>
+           All courses, {{ course_counter }} ones
+      </h1>
+    {% else %}
+      <h1>
+           Courses by search "{{ search_string }}", {{ course_counter }} ones
+      </h1>
+    {% endif %}
+   <section class="search">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <div class="text-left">
+            <form action="{% url 'course_list_search' %}" method="get">
+                {{ form }}
+                {{ sort_form }}
+                <input class="" type="submit" value="Submit">
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <div class="module">
+    {% for course in courses %}
+      {% with subject=course.subject %}
+        <h3>
+          <a href="{% url "course_detail" course.slug %}">
+            {{ course.mean_rating }} {{ course.name }} {{ course.price }} {{ course.created }}
+          </a>
+        </h3>
+        <p>
+          <a href="{% url "course_list_by_subject" subject.slug %}">{{ subject }}</a>.
+            {{ course.num_modules }} modules.
+            Instructor: {{ course.owner.get_full_name }}
+        </p>
+      {% endwith %}
+    {% endfor %}
+  </div>
+{% endblock %}

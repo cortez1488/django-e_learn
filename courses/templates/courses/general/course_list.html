@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}
+  {% if subject %}
+    {{ subject.name}} courses
+  {% else %}
+    All courses
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+
+  <h1>
+    {% if subject %}
+      {{ subject.name }} courses
+    {% else %}
+        All courses, {{ course_counter }} ones
+    {% endif %}
+  </h1>
+
+  <section class="search">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <div class="text-left">
+            <form action="{% url 'course_list_search' %}" method="get">
+                {{ form }}
+                {{ sort_form }}
+                <input class="" type="submit" value="Submit">
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <div class="contents">
+            <h3>Subjects</h3>
+            <ul id="modules">
+              <li {% if not subject %}class="selected"{% endif %}>
+                <a href="{% url "course_list_all" %}">All</a>
+              </li>
+              {% for s in subjects %}
+                <li {% if subject == s %}class="selected"{% endif %}>
+                  <a href="{% url "course_list_by_subject" s.slug %}">
+                    {{ s.name }}
+                    <br><span>{{ s.num_courses }} courses</span>
+                  </a>
+                </li>
+              {% endfor %}
+            </ul>
+  </div>
+
+
+  <div class="module">
+    {% for course in courses %}
+      {% with subject=course.subject %}
+        <h3 style="text-decoration: none">
+          <a href="{% url "course_detail" course.slug %}">
+            {{ course.mean_rating }} {{ course.name }} {{ course.price }} {{ course.created }}
+          </a>
+        </h3>
+
+        <p style="text-decoration: none">
+          <a href="{% url "course_list_by_subject" subject.slug %}">{{ subject }}</a>.
+            {{ course.num_modules }} modules.
+            Instructor: {{ course.owner.get_full_name }}
+        </p>
+      {% endwith %}
+    {% endfor %}
+  </div>
+{% endblock %}

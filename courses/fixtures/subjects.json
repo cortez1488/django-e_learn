@@ -1,0 +1,102 @@
+[
+{
+  "model": "courses.subject",
+  "pk": 1,
+  "fields": {
+    "name": "Russian Language",
+    "slug": "russian-language"
+  }
+},
+{
+  "model": "courses.subject",
+  "pk": 2,
+  "fields": {
+    "name": "English Language",
+    "slug": "english-language"
+  }
+},
+{
+  "model": "courses.course",
+  "pk": 1,
+  "fields": {
+    "name": "Easy russian",
+    "slug": "easy-russian",
+    "subject": 1,
+    "owner": 1,
+    "created": "2021-09-18",
+    "overview": "Learn russian in 3 months"
+  }
+},
+{
+  "model": "courses.course",
+  "pk": 2,
+  "fields": {
+    "name": "Easy English",
+    "slug": "easy-english",
+    "subject": 2,
+    "owner": 1,
+    "created": "2021-09-18",
+    "overview": "It's the easiest way to learn english"
+  }
+},
+{
+  "model": "courses.module",
+  "pk": 1,
+  "fields": {
+    "name": "First lesson",
+    "slug": "first-lesson",
+    "course": 1,
+    "description": "it's the easiest lesson"
+  }
+},
+{
+  "model": "courses.module",
+  "pk": 2,
+  "fields": {
+    "name": "Second",
+    "slug": "second",
+    "course": 1,
+    "description": "much more difficult lesson"
+  }
+},
+{
+  "model": "courses.module",
+  "pk": 3,
+  "fields": {
+    "name": "Third",
+    "slug": "third",
+    "course": 1,
+    "description": "Finally test"
+  }
+},
+{
+  "model": "courses.module",
+  "pk": 4,
+  "fields": {
+    "name": "First lesson",
+    "slug": "first-lesson",
+    "course": 2,
+    "description": "it's the first lesson"
+  }
+},
+{
+  "model": "courses.module",
+  "pk": 5,
+  "fields": {
+    "name": "Second",
+    "slug": "second",
+    "course": 2,
+    "description": "It's more difficult lesson"
+  }
+},
+{
+  "model": "courses.module",
+  "pk": 6,
+  "fields": {
+    "name": "third",
+    "slug": "third",
+    "course": 2,
+    "description": "this is finally test"
+  }
+}
+]
