@@ -7,11 +7,11 @@
 {% block content %}
     {% if search_string == "" %}
         <h1>
-           All courses, {{ course_counter }} ones
+           All courses, {{ course_counter }} ones{% if search_by_subject %}, by subject {{ search_by_subject }} {% endif %}
       </h1>
     {% else %}
       <h1>
-           Courses by search "{{ search_string }}", {{ course_counter }} ones
+           Courses by search "{{ search_string }}", {{ course_counter }} ones{% if search_by_subject %}, by subject {{ search_by_subject }} {% endif %}
       </h1>
     {% endif %}
    <section class="search">
@@ -19,16 +19,41 @@
       <div class="row">
         <div class="col-12">
           <div class="text-left">
-            <form action="{% url 'course_list_search' %}" method="get">
-                {{ form }}
-                {{ sort_form }}
-                <input class="" type="submit" value="Submit">
-            </form>
+              {% if search_by_subject %}
+                  <form action="{% url 'course_list_by_subject' search_by_subject %}" method="get">
+                    {{ form }}
+                    {{ sort_form }}
+                    <input class="" type="submit" value="Submit">
+                  </form>
+              {% else %}
+                  <form action="{% url 'course_list_search' %}" method="get">
+                    {{ form }}
+                    {{ sort_form }}
+                    <input class="" type="submit" value="Submit">
+                  </form>
+              {% endif %}
           </div>
         </div>
       </div>
     </div>
   </section>
+
+    <div class="contents">
+            <h3>Subjects</h3>
+            <ul id="modules">
+              <li {% if not subject %}class="selected"{% endif %}>
+                <a href="{% url "course_list_all" %}">All</a>
+              </li>
+              {% for s in subjects %}
+                <li {% if subject == s %}class="selected"{% endif %}>
+                  <a href="{% url "course_list_by_subject" s.slug %}">
+                    {{ s.name }}
+                    <br><span>{{ s.num_courses }} courses</span>
+                  </a>
+                </li>
+              {% endfor %}
+            </ul>
+  </div>
 
 
   <div class="module">

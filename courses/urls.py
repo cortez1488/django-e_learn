@@ -23,5 +23,5 @@ urlpatterns = [
     path('module/<int:module_id>/content/<model_name>/create/', ContentCreateUpdateView.as_view() ,name = "module_content_create"),
     path('module/<int:module_id>/content/<model_name>/', ContentCreateUpdateView.as_view() ,name = "module_content_update"),
     path('content/<int:id>/delete/', ContentDeleteView.as_view(), name = 'module_content_delete'),
-    path('<slug:subject>/', CourseListView.as_view() ,name = "course_list_by_subject"),
+    path('<slug:subject>/', CourseListViewSearch.as_view() ,name = "course_list_by_subject"),
 ]

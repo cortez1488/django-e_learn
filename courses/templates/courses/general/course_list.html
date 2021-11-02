@@ -11,11 +11,7 @@
 {% block content %}
 
   <h1>
-    {% if subject %}
-      {{ subject.name }} courses
-    {% else %}
         All courses, {{ course_counter }} ones
-    {% endif %}
   </h1>
 
   <section class="search">
@@ -24,7 +20,7 @@
         <div class="col-12">
           <div class="text-left">
             <form action="{% url 'course_list_search' %}" method="get">
-                {{ form }}
+                {{ search_form }}
                 {{ sort_form }}
                 <input class="" type="submit" value="Submit">
             </form>
