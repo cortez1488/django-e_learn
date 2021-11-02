@@ -72,6 +72,9 @@
                         {% else %}
                             <h5>red</h5>
                         {% endif %}
+                        {% if review.user == user %}
+                            <a href="{% url 'review_update' review.pk %}">Исправить отзыв</a>
+                        {% endif %}
                     {% endfor %}
                   </div>
               </div>

@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.views.generic.list import ListView
-from django.views.generic import CreateView, DetailView, UpdateView, DeleteView, FormView
+from django.views.generic import CreateView, DetailView, UpdateView, DeleteView, FormView, UpdateView
 from django.urls import reverse_lazy, reverse
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.models import User
@@ -18,6 +18,17 @@ from braces.views import CsrfExemptMixin, JsonRequestResponseMixin
 from django.db.models import Count
 from statistics import mean
 # Create your views here.
+
+
+class UpdateReview(UpdateView):
+    form_class = ReviewForm
+    success_url = ''
+    template_name = r'courses\reviews\review_updating.html'
+    queryset = Review.objects.all()
+
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.success_url = reverse_lazy('course_detail', kwargs={'slug':self.get_object().course.slug})
 
 class AddReview(View):
     def post(self, request):

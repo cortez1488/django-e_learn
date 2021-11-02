@@ -3,7 +3,7 @@ from django.urls import path, include
 from .views import ManageCourseListView, CourseCreateView, CourseUpdateView, \
 CourseDeleteView, CourseModuleUpdateView, ContentCreateUpdateView, ContentDeleteView, \
 ModuleContentListView, ModuleOrderView, ContentOrderView, CourseListView, CourseDetailView, \
-CourseListSearchView, AddStarRating, AddReview
+CourseListSearchView, AddStarRating, AddReview, UpdateReview
 
 urlpatterns = [
     path('', CourseListView.as_view() ,name = "course_list_all"),
@@ -24,4 +24,6 @@ urlpatterns = [
     path('content/<int:id>/delete/', ContentDeleteView.as_view(), name = 'module_content_delete'),
     path('search/', CourseListSearchView.as_view() ,name = "course_list_search"),
     path('<slug:subject>/', CourseListSearchView.as_view() ,name = "course_list_by_subject"),
+
+    path('review/<int:pk>', UpdateReview.as_view() ,name = "review_update"),
 ]
