@@ -83,14 +83,42 @@ class CourseListSortingContextMixin():
         context['course_counter'] = self.queryset.count()
         return context
 
+    def main(self, request, *args, **kwargs):
+
+        if 'subject' in kwargs:
+            self.by_subject(kwargs)
+
+        if 'search' in request.GET:
+            self.searching(request, *args, **kwargs)
+
+        if 'sorting' in request.GET:
+            self.sorting()
+
+    def searching(self, request, *args, **kwargs):
+        self.search_str = request.GET.get('search')
+        self.queryset = self.get_queryset().annotate(num_modules=Count('modules'))
+        self.queryset = self.get_queryset().filter(Q(name__icontains=self.search_str) | \
+                                                   Q(overview__icontains=self.search_str))
+        self.extra_context.update({'search_string': self.search_str})
+
+    def by_subject(self, kwargs):
+        subject = get_object_or_404(Subject, slug=kwargs['subject'])
+        self.queryset = self.get_queryset().filter(subject=subject)
+        self.extra_context.update({'search_by_subject': subject.slug})
+
     def sorting(self):
         sorting = self.request.GET.get('sorting')
         if sorting != 'STNDRT':
             self.queryset = self.get_queryset().order_by(self.sort_dict[sorting])
 
+    def get_initial(self):
+        initial = super().get_initial()
+        initial.update({'search':self.search_str})
+        return initial
 
 
-class CourseListViewSearch(CourseListSortingContextMixin, ListView, FormView):
+
+class CourseListSearchView(CourseListSortingContextMixin, ListView, FormView):
     model = Course
     template_name = r'courses\general\course_list_search.html'
     context_object_name = 'courses'
@@ -103,36 +131,16 @@ class CourseListViewSearch(CourseListSortingContextMixin, ListView, FormView):
 
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
+        self.main(request, *args, **kwargs)
 
-        if 'subject' in kwargs:
-            subject = get_object_or_404(Subject, slug=kwargs['subject'])
-            self.queryset = self.get_queryset().filter(subject = subject)
-            self.extra_context.update({'search_by_subject': subject.slug})
-
-        if 'search' in request.GET:
-            self.searching(request, *args, **kwargs)
-
-        if 'sorting' in request.GET:
-            self.sorting()
 
     def get(self, request, *args, **kwargs):
         if request.GET.get('search') == '' and request.GET.get('sorting') == 'STNDRT' and 'subject' not in kwargs:
             return redirect('course_list_all')
         return super().get(self, request, *args, **kwargs)
 
-    def get_initial(self):
-        initial = super().get_initial()
-        initial.update({'search':self.search_str})
-        return initial
 
-    def searching(self, request, *args, **kwargs):
-        self.search_str = request.GET.get('search')
-        self.queryset = self.get_queryset().annotate(num_modules=Count('modules'))
-        self.queryset = self.get_queryset().filter(Q(name__icontains=self.search_str) | \
-                                                   Q(overview__icontains=self.search_str))
-        self.extra_context.update({'search_string': self.search_str})
 
-    #def by_subject(self, kwargs):
 
 
 class CourseListView(CourseListSortingContextMixin, ListView):
