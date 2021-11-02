@@ -94,12 +94,14 @@ class CourseListSortingContextMixin():
         if 'sorting' in request.GET:
             self.sorting()
 
+        self.number_annotation()
+
     def searching(self, request, *args, **kwargs):
         self.search_str = request.GET.get('search')
-        self.queryset = self.get_queryset().annotate(num_modules=Count('modules'))
         self.queryset = self.get_queryset().filter(Q(name__icontains=self.search_str) | \
                                                    Q(overview__icontains=self.search_str))
         self.extra_context.update({'search_string': self.search_str})
+
 
     def by_subject(self, kwargs):
         subject = get_object_or_404(Subject, slug=kwargs['subject'])
@@ -116,20 +118,20 @@ class CourseListSortingContextMixin():
         initial.update({'search':self.search_str})
         return initial
 
+    def number_annotation(self):
+        self.queryset = self.get_queryset().annotate(num_modules=Count('modules'))
+
 
 
 class CourseListSearchView(CourseListSortingContextMixin, ListView, FormView):
     model = Course
     template_name = r'courses\general\course_list_search.html'
     context_object_name = 'courses'
-    extra_context = {}
     form_class = SearchForm
 
-    def __init__(self, **kwargs):
-        self.search_str = ''
-        super().__init__(**kwargs)
-
     def setup(self, request, *args, **kwargs):
+        self.extra_context = {}
+        self.search_str = ''
         super().setup(request, *args, **kwargs)
         self.main(request, *args, **kwargs)
 
@@ -137,6 +139,8 @@ class CourseListSearchView(CourseListSortingContextMixin, ListView, FormView):
     def get(self, request, *args, **kwargs):
         if request.GET.get('search') == '' and request.GET.get('sorting') == 'STNDRT' and 'subject' not in kwargs:
             return redirect('course_list_all')
+        elif request.GET.get('search') == '' and request.GET.get('sorting') == 'STNDRT' and 'subject' in kwargs:
+            return redirect('course_list_by_subject', subject=kwargs['subject'])
         return super().get(self, request, *args, **kwargs)
 
 
@@ -150,7 +154,6 @@ class CourseListView(CourseListSortingContextMixin, ListView):
 
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
-
         if 'sorting' in request.GET:
             self.sorting()
 

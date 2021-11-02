@@ -9,6 +9,10 @@
         <h1>
            All courses, {{ course_counter }} ones{% if search_by_subject %}, by subject {{ search_by_subject }} {% endif %}
       </h1>
+    {% elif not search_string %}
+        <h1>
+           All courses, {{ course_counter }} ones{% if search_by_subject %}, by subject {{ search_by_subject }} {% endif %}
+      </h1>
     {% else %}
       <h1>
            Courses by search "{{ search_string }}", {{ course_counter }} ones{% if search_by_subject %}, by subject {{ search_by_subject }} {% endif %}
