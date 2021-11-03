@@ -50,7 +50,7 @@ class AddStarRating(View):
             course = Course.objects.get(id=request.POST.get('course'))
             Rating.objects.update_or_create(user=request.user, course = course,
                                                 defaults = {'star':form.cleaned_data['star']})
-            course.mean_rating = str(round((mean([i.star.value for i in course.rating_set.all()])), 2))
+            course.mean_rating = round((mean([i.star.value for i in course.rating_set.all()])), 2)
             course.save()
             return redirect("course_detail", slug=course.slug)
         else:
@@ -81,7 +81,7 @@ class CourseFiltering():
 
     def filtering(self, request):
         self.filter_by_price(request)
-        #self.filter_by_rating(request)
+        self.filter_by_rating(request)
 
     def filter_by_price(self, request):
         if request.GET.get('pr_lte') != '':
@@ -91,8 +91,9 @@ class CourseFiltering():
             self.queryset = self.queryset.filter(price__gte=int(request.GET.get('pr_gte')))
 
     def filter_by_rating(self, request):
-        #self.queryset = self.queryset.filter(mean_rating__lte=request.GET.get('rating'))
-        pass
+        if request.GET.get('rating') != '':
+            self.queryset = self.queryset.filter(mean_rating__gte=request.GET.get('rating'))
+
 
 class CourseListSortingContextMixin(CourseFiltering):
     sort_dict = {'IPR':'price',
@@ -106,7 +107,7 @@ class CourseListSortingContextMixin(CourseFiltering):
         context['course_counter'] = self.queryset.count()
 
         context['sort_form'] = SortForm(initial={'sorting':self.request.GET.get('sorting')})
-        context['filter_star_form'] = FilterRatingForm
+        context['filter_star_form'] = FilterRatingForm(initial={'rating':self.request.GET.get('rating')})
         context['filter_price_form'] = FilterPriceForm(initial={'pr_lte':self.request.GET.get('pr_lte'), 'pr_gte':self.request.GET.get('pr_gte')})
         return context
 

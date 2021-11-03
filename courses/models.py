@@ -63,7 +63,7 @@ class Course(models.Model):
     overview = models.TextField()
     price = models.IntegerField('Цена', default=0)
     views_count = models.IntegerField("Просмотры курса", default=0)
-    mean_rating = models.CharField('Рейтинг', default=0, max_length=5)
+    mean_rating = models.DecimalField('Рейтинг', default=0, decimal_places=2, max_digits=3)
 
     class Meta:
         ordering=['-created']
