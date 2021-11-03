@@ -27,12 +27,16 @@
                   <form action="{% url 'course_list_by_subject' search_by_subject %}" method="get">
                     {{ form }}
                     {{ sort_form }}
+                    {{ filter_price_form }}
+                   <!-- {{ filter_star_form }} -->
                     <input class="" type="submit" value="Submit">
                   </form>
               {% else %}
                   <form action="{% url 'course_list_search' %}" method="get">
                     {{ form }}
                     {{ sort_form }}
+                    <!-- {{ filter_star_form }} -->
+                    {{ filter_price_form }}
                     <input class="" type="submit" value="Submit">
                   </form>
               {% endif %}

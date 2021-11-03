@@ -5,7 +5,7 @@ from django.urls import reverse_lazy, reverse
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.models import User
 from django.db.models import Q
-from .forms import ModuleFormSet, SearchForm, RatingForm, ReviewForm, SortForm
+from .forms import ModuleFormSet, SearchForm, RatingForm, ReviewForm, SortForm, FilterRatingForm, FilterPriceForm
 from students.forms import CourseEnrollForm
 from django.views.generic.base import TemplateResponseMixin, View
 from django.shortcuts import redirect, get_object_or_404
@@ -33,7 +33,6 @@ class UpdateReview(UpdateView):
 class AddReview(View):
     def post(self, request):
         course = Course.objects.get(id=request.POST.get('course'))
-        print(course)
         form = ReviewForm(request.POST)
         if form.is_valid():
             review = form.save(commit=False)
@@ -42,7 +41,6 @@ class AddReview(View):
             review.save()
             return redirect("course_detail", slug=course.slug)
         else:
-            print(form.errors)
             return HttpResponse(status=400)
 
 class AddStarRating(View):
@@ -79,9 +77,23 @@ class CourseDetailView(DetailView):
         self.object.save()
         return returned
 
+class CourseFiltering():
 
+    def filtering(self, request):
+        self.filter_by_price(request)
+        #self.filter_by_rating(request)
 
-class CourseListSortingContextMixin():
+    def filter_by_price(self, request):
+        if request.GET.get('pr_lte') != '':
+            self.queryset = self.queryset.filter(price__lte=int(request.GET.get('pr_lte')))
+        if request.GET.get('pr_gte') != '':
+            self.queryset = self.queryset.filter(price__gte=int(request.GET.get('pr_gte')))
+
+    def filter_by_rating(self, request):
+        #self.queryset = self.queryset.filter(mean_rating__lte=request.GET.get('rating'))
+        pass
+
+class CourseListSortingContextMixin(CourseFiltering):
     sort_dict = {'IPR':'price',
                 'DPR':'-price',
                  'DT':'-created',
@@ -90,8 +102,11 @@ class CourseListSortingContextMixin():
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         context['subjects'] = Subject.objects.all().annotate(num_courses=Count('courses'))
-        context['sort_form'] = SortForm
         context['course_counter'] = self.queryset.count()
+
+        context['sort_form'] = SortForm
+        context['filter_star_form'] = FilterRatingForm
+        context['filter_price_form'] = FilterPriceForm
         return context
 
     def main(self, request, *args, **kwargs):
@@ -104,6 +119,8 @@ class CourseListSortingContextMixin():
 
         if 'sorting' in request.GET:
             self.sorting()
+
+        self.filtering(request)
 
         self.number_annotation()
 
@@ -133,7 +150,6 @@ class CourseListSortingContextMixin():
         self.queryset = self.get_queryset().annotate(num_modules=Count('modules'))
 
 
-
 class CourseListSearchView(CourseListSortingContextMixin, ListView, FormView):
     model = Course
     template_name = r'courses\general\course_list_search.html'
@@ -153,9 +169,6 @@ class CourseListSearchView(CourseListSortingContextMixin, ListView, FormView):
         elif request.GET.get('search') == '' and request.GET.get('sorting') == 'STNDRT' and 'subject' in kwargs:
             return redirect('course_list_by_subject', subject=kwargs['subject'])
         return super().get(self, request, *args, **kwargs)
-
-
-
 
 
 class CourseListView(CourseListSortingContextMixin, ListView):
@@ -262,7 +275,6 @@ class CourseModuleUpdateView(TemplateResponseMixin,View):
     def post(self, request, *args, **kwargs):
         formset = self.get_formset(data=request.POST)
         if formset.is_valid():
-            print(formset.cleaned_data)
             formset.save()
             return redirect('manage_course_list')
         return self.render_to_response({'course':self.course, 'formset':formset})
@@ -281,7 +293,6 @@ class CourseList(ListView):
 class OwnerMixin(object):
     def get_queryset(self):
         qs = super().get_queryset()
-        print(qs)
         return qs.filter(owner=self.request.user)
 
 
