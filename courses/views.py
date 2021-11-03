@@ -86,6 +86,7 @@ class CourseFiltering():
     def filter_by_price(self, request):
         if request.GET.get('pr_lte') != '':
             self.queryset = self.queryset.filter(price__lte=int(request.GET.get('pr_lte')))
+
         if request.GET.get('pr_gte') != '':
             self.queryset = self.queryset.filter(price__gte=int(request.GET.get('pr_gte')))
 
@@ -104,9 +105,9 @@ class CourseListSortingContextMixin(CourseFiltering):
         context['subjects'] = Subject.objects.all().annotate(num_courses=Count('courses'))
         context['course_counter'] = self.queryset.count()
 
-        context['sort_form'] = SortForm
+        context['sort_form'] = SortForm(initial={'sorting':self.request.GET.get('sorting')})
         context['filter_star_form'] = FilterRatingForm
-        context['filter_price_form'] = FilterPriceForm
+        context['filter_price_form'] = FilterPriceForm(initial={'pr_lte':self.request.GET.get('pr_lte'), 'pr_gte':self.request.GET.get('pr_gte')})
         return context
 
     def main(self, request, *args, **kwargs):
