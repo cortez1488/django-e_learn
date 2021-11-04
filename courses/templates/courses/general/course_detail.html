@@ -6,6 +6,11 @@
 
 {% block content %}
   {% with subject=course.subject %}
+      <h5>
+          {% for tag in course.tags_set.all %}
+              #{{ tag }}
+          {% endfor %}
+      </h5>
     <h1>
       {{ course.name }}
     </h1>

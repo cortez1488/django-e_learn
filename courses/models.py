@@ -8,6 +8,17 @@ from .fields import OrderField
 # Create your models here.
 # Stars
 
+class Tags(models.Model):
+    name = models.CharField(max_length=25)
+    course = models.ManyToManyField('Course', verbose_name='Курс')
+
+    def __str__(self):
+        return f"{self.name}"
+
+    class Meta:
+        verbose_name = 'Тег'
+        verbose_name_plural = 'Теги'
+
 class Review(models.Model):
     course = models.ForeignKey('Course', on_delete=models.CASCADE, verbose_name='Курс')
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь')

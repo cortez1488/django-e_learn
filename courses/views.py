@@ -11,7 +11,7 @@ from django.views.generic.base import TemplateResponseMixin, View
 from django.shortcuts import redirect, get_object_or_404
 from django.forms.models import modelform_factory
 from django.apps import apps
-from .models import Module, Content, Course, Subject, Rating, RatingStar, Review
+from .models import Module, Content, Course, Subject, Rating, RatingStar, Review, Tags
 from django.http import HttpResponseRedirect, HttpResponse
 from .correct_title import correct_name
 from braces.views import CsrfExemptMixin, JsonRequestResponseMixin
@@ -128,8 +128,10 @@ class CourseListSortingContextMixin(CourseFiltering):
 
     def searching(self, request, *args, **kwargs):
         self.search_str = request.GET.get('search')
-        self.queryset = self.get_queryset().filter(Q(name__icontains=self.search_str) | \
-                                                   Q(overview__icontains=self.search_str))
+        tags = Tags.objects.filter(name__icontains=self.search_str)
+        self.queryset = self.get_queryset().filter(Q(name__icontains =      self.search_str) | \
+                                                   Q(overview__icontains =  self.search_str)| \
+                                                   Q(tags__in =[tag.id for tag in tags]))
         self.extra_context.update({'search_string': self.search_str})
 
 
