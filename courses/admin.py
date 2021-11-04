@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Subject, Course, Module
+from .models import Subject, Course, Module, Tags, Review, Rating
 
 @admin.register(Subject)
 class AdminSubject(admin.ModelAdmin):
@@ -17,3 +17,24 @@ class AdminCourse(admin.ModelAdmin):
     search_fields = ['owner', 'name', 'subject']
     prepopulated_fields = {'slug':('name',)}
     inlines = [ModuleInline]
+
+
+@admin.register(Tags)
+class AdminTags(admin.ModelAdmin):
+    list_display = ['name',]
+    list_filter = ['name']
+    search_fields = ['name']
+
+@admin.register(Review)
+class AdminReview(admin.ModelAdmin):
+    list_display = ['course', 'user', 'grade']
+    list_filter = ['date']
+    search_fields = ['name', 'course', 'text', 'user']
+
+@admin.register(Rating)
+class AdminRating(admin.ModelAdmin):
+    list_display = ['course', 'star', 'user' ]
+    list_filter = ['course', ]
+    search_fields = ['course']
+
+
