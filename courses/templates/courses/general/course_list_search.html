@@ -18,7 +18,7 @@
            Courses by search "{{ search_string }}", {{ course_counter }} ones{% if search_by_subject %}, by subject {{ search_by_subject }} {% endif %}
       </h1>
     {% endif %}
-   <section class="search">
+   <section class="search-searched">
     <div class="container-fluid">
       <div class="row">
         <div class="col-12">
@@ -64,20 +64,22 @@
   </div>
 
 
-  <div class="module">
+  <ul class="module list-group">
     {% for course in courses %}
       {% with subject=course.subject %}
-        <h3>
-          <a href="{% url "course_detail" course.slug %}">
-            {{ course.mean_rating }} {{ course.name }} {{ course.price }} {{ course.created }}
-          </a>
-        </h3>
-        <p>
-          <a href="{% url "course_list_by_subject" subject.slug %}">{{ subject }}</a>.
-            {{ course.num_modules }} modules.
-            Instructor: {{ course.owner.get_full_name }}
-        </p>
+          <li class="list-group-item">
+            <h4 class=''>
+              <a href="{% url "course_detail" course.slug %}">
+                {{ course.mean_rating }} {{ course.name }} {{ course.price }} {{ course.created }}
+              </a>
+            </h4>
+               <a href="{% url "course_list_by_subject" subject.slug %}">{{ subject }}</a>
+            <p>
+                {{ course.num_modules }} modules.
+                Instructor: {{ course.owner.get_full_name }}
+            </p>
+          </li>
       {% endwith %}
     {% endfor %}
-  </div>
+  </ul>
 {% endblock %}
