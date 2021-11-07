@@ -85,6 +85,7 @@ class CourseFiltering():
 
     def filter_by_price(self, request):
         if request.GET.get('pr_lte') != '':
+            print(request.GET)
             self.queryset = self.queryset.filter(price__lte=int(request.GET.get('pr_lte')))
 
         if request.GET.get('pr_gte') != '':
@@ -122,7 +123,8 @@ class CourseListSortingContextMixin(CourseFiltering):
         if 'sorting' in request.GET:
             self.sorting()
 
-        self.filtering(request)
+        if 'pr_lte' in  request.GET or 'pr_gte' in request.GET:
+            self.filtering(request)
 
         self.number_annotation()
 
@@ -170,7 +172,7 @@ class CourseListSearchView(CourseListSortingContextMixin, ListView, FormView):
     def get(self, request, *args, **kwargs):
         if request.GET.get('search') == '' and request.GET.get('sorting') == 'STNDRT' and 'subject' not in kwargs:
             return redirect('course_list_all')
-        elif request.GET.get('search') == '' and request.GET.get('sorting') == 'STNDRT' and 'subject' in kwargs:
+        elif request.GET.get('search') == '' and request.GET.get('sorting') == 'STNDRT' and 'subject' in kwargs and len(request.GET) <= 3:
             return redirect('course_list_by_subject', subject=kwargs['subject'])
         return super().get(self, request, *args, **kwargs)
 
