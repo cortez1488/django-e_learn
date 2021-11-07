@@ -177,7 +177,7 @@ class CourseListSearchView(CourseListSortingContextMixin, ListView, FormView):
 
 class CourseListView(CourseListSortingContextMixin, ListView):
     model = Course
-    template_name = r'courses\general\course_list.html'
+    template_name = r'courses\general\course_list_search.html'
     context_object_name = 'courses'
 
     def setup(self, request, *args, **kwargs):
@@ -189,7 +189,7 @@ class CourseListView(CourseListSortingContextMixin, ListView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['search_form'] =  SearchForm
+        context['form'] =  SearchForm
         return context
 
 

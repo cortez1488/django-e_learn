@@ -21,7 +21,7 @@
    <section class="search-searched">
     <div class="container-fluid">
       <div class="row">
-        <div class="col-12">
+        <div class="col-4">
           <div class="text-left">
               {% if search_by_subject %}
                   <form action="{% url 'course_list_by_subject' search_by_subject %}" method="get">
@@ -42,44 +42,51 @@
               {% endif %}
           </div>
         </div>
+        <div class="col-4">
+          <ul class="module list-group  text-left">
+            {% for course in courses %}
+              {% with subject=course.subject %}
+                  <li class="list-group-item ">
+                    <h4 class=''>
+                      <a href="{% url "course_detail" course.slug %}">
+                        {{ course.mean_rating }} {{ course.name }} {{ course.price }} {{ course.created }}
+                      </a>
+                    </h4>
+                       <a href="{% url "course_list_by_subject" subject.slug %}">{{ subject }}</a>
+                    <p>
+                        {{ course.num_modules }} modules.
+                        Instructor: {{ course.owner.get_full_name }}
+                    </p>
+                  </li>
+              {% endwith %}
+            {% endfor %}
+          </ul>
+        </div>
+        <div class="col-4 subjects">
+              <div class="contents">
+                      <h3>Subjects</h3>
+                      <ul id="modules">
+                        <li {% if not subject %}class="selected"{% endif %}>
+                          <a href="{% url "course_list_all" %}">All</a>
+                        </li>
+                        {% for s in subjects %}
+                          <li {% if subject == s %}class="selected"{% endif %}>
+                            <a href="{% url "course_list_by_subject" s.slug %}">
+                              {{ s.name }}
+                              <br><span>{{ s.num_courses }} courses</span>
+                            </a>
+                          </li>
+                        {% endfor %}
+                      </ul>
+              </div>
+        </div>
       </div>
     </div>
   </section>
 
-    <div class="contents">
-            <h3>Subjects</h3>
-            <ul id="modules">
-              <li {% if not subject %}class="selected"{% endif %}>
-                <a href="{% url "course_list_all" %}">All</a>
-              </li>
-              {% for s in subjects %}
-                <li {% if subject == s %}class="selected"{% endif %}>
-                  <a href="{% url "course_list_by_subject" s.slug %}">
-                    {{ s.name }}
-                    <br><span>{{ s.num_courses }} courses</span>
-                  </a>
-                </li>
-              {% endfor %}
-            </ul>
+<div class="containter-fluid">
+  <div class="row">
+
   </div>
-
-
-  <ul class="module list-group">
-    {% for course in courses %}
-      {% with subject=course.subject %}
-          <li class="list-group-item">
-            <h4 class=''>
-              <a href="{% url "course_detail" course.slug %}">
-                {{ course.mean_rating }} {{ course.name }} {{ course.price }} {{ course.created }}
-              </a>
-            </h4>
-               <a href="{% url "course_list_by_subject" subject.slug %}">{{ subject }}</a>
-            <p>
-                {{ course.num_modules }} modules.
-                Instructor: {{ course.owner.get_full_name }}
-            </p>
-          </li>
-      {% endwith %}
-    {% endfor %}
-  </ul>
+</div>
 {% endblock %}
