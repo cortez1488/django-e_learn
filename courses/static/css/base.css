@@ -148,10 +148,12 @@ h1 {
     display:block;
     color:#fff;
     text-decoration:none;
+    transition: all 0.4s ease;
+
 }
 
 .contents ul a:hover {
-    color:#4dcc43;
+    color:rgba(220,48,231,1);
     cursor:move;
 }
 

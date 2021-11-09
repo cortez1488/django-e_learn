@@ -140,8 +140,7 @@ class CourseListSortingContextMixin(CourseFiltering):
     def by_subject(self, kwargs):
         subject = get_object_or_404(Subject, slug=kwargs['subject'])
         self.queryset = self.get_queryset().filter(subject=subject)
-        self.extra_context.update({'search_by_subject': subject.slug,
-                                   'action': "{%% url 'course_list_by_subject' %s %%}" % subject.slug})
+        self.extra_context.update({'search_by_subject': subject.slug})
 
     def sorting(self):
         sorting = self.request.GET.get('sorting')
@@ -164,8 +163,8 @@ class CourseListSearchView(CourseListSortingContextMixin, ListView, FormView):
     form_class = SearchForm
 
     def setup(self, request, *args, **kwargs):
-        print(request.GET)
-        self.extra_context = {'action': "{%% url 'course_list_search' %%}"}
+        #print(request.GET)
+        self.extra_context = {}
         self.search_str = ''
         super().setup(request, *args, **kwargs)
         self.main(request, *args, **kwargs)
@@ -194,7 +193,6 @@ class CourseListView(CourseListSortingContextMixin, ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         context['form'] =  SearchForm
-        context['action'] =  "{%% url 'course_list_search' %%}"
         return context
 
 
