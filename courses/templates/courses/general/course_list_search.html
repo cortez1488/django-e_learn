@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% load crispy_forms_tags %}
 {% block title %}
     Searching courses
 {% endblock %}
@@ -25,18 +25,18 @@
           <div class="text-left">
               {% if search_by_subject %}
                   <form action="{% url 'course_list_by_subject' search_by_subject %}" method="get">
-                    {{ form }}
-                    {{ sort_form }}
-                    {{ filter_price_form }}
-                    {{ filter_star_form }}
+                    {{ form|crispy }}
+                    {{ sort_form|crispy }}
+                    {{ filter_price_form|crispy }}
+                    {{ filter_star_form|crispy }}
                     <input class="" type="submit" value="Submit">
                   </form>
               {% else %}
                   <form action="{% url 'course_list_search' %}" method="get">
-                    {{ form }}
-                    {{ sort_form }}
-                    {{ filter_star_form }}
-                    {{ filter_price_form }}
+                    {{ form|crispy }}
+                    {{ sort_form|crispy }}
+                    {{ filter_star_form|crispy }}
+                    {{ filter_price_form|crispy }}
                     <input class="" type="submit" value="Submit">
                   </form>
               {% endif %}

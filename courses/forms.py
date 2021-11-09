@@ -14,6 +14,9 @@ class RatingForm(forms.ModelForm):
     class Meta:
         model = Rating
         fields = ('star',)
+        widgets = {
+            'star' :forms.Select(attrs={'class':'form-control'}),
+        }
 
 class ReviewForm(forms.ModelForm):
     class Meta:
