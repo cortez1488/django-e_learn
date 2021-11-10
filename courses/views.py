@@ -106,7 +106,7 @@ class CourseListSortingContextMixin(CourseFiltering):
         context = super().get_context_data(**kwargs)
         context['subjects'] = Subject.objects.all().annotate(num_courses=Count('courses'))
         context['course_counter'] = self.queryset.count()
-
+        context['form'] = SearchForm(initial={'search':self.search_str})
         context['sort_form'] = SortForm(initial={'sorting':self.request.GET.get('sorting')})
         context['filter_star_form'] = FilterRatingForm(initial={'rating':self.request.GET.get('rating')})
         context['filter_price_form'] = FilterPriceForm(initial={'pr_lte':self.request.GET.get('pr_lte'), 'pr_gte':self.request.GET.get('pr_gte')})
@@ -147,20 +147,15 @@ class CourseListSortingContextMixin(CourseFiltering):
         if sorting != 'STNDRT':
             self.queryset = self.get_queryset().order_by(self.sort_dict[sorting])
 
-    def get_initial(self):
-        initial = super().get_initial()
-        initial.update({'search':self.search_str})
-        return initial
 
     def number_annotation(self):
         self.queryset = self.get_queryset().annotate(num_modules=Count('modules'))
 
 
-class CourseListSearchView(CourseListSortingContextMixin, ListView, FormView):
+class CourseListSearchView(CourseListSortingContextMixin, ListView):
     model = Course
     template_name = r'courses\general\course_list_search.html'
     context_object_name = 'courses'
-    form_class = SearchForm
 
     def setup(self, request, *args, **kwargs):
         self.extra_context = {}
