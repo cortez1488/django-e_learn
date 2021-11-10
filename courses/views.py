@@ -163,37 +163,10 @@ class CourseListSearchView(CourseListSortingContextMixin, ListView, FormView):
     form_class = SearchForm
 
     def setup(self, request, *args, **kwargs):
-        #print(request.GET)
         self.extra_context = {}
         self.search_str = ''
         super().setup(request, *args, **kwargs)
         self.main(request, *args, **kwargs)
-
-
-    def get(self, request, *args, **kwargs):
-        if request.GET.get('search') == '' and request.GET.get('sorting') == 'STNDRT' and 'subject' not in kwargs:
-            return redirect('course_list_all')
-        elif request.GET.get('search') == '' and request.GET.get('sorting') == 'STNDRT' and 'subject' in kwargs and len(request.GET) <= 3:
-            return redirect('course_list_by_subject', subject=kwargs['subject'])
-        return super().get(self, request, *args, **kwargs)
-
-
-class CourseListView(CourseListSortingContextMixin, ListView):
-    model = Course
-    template_name = r'courses\general\course_list_search.html'
-    context_object_name = 'courses'
-
-    def setup(self, request, *args, **kwargs):
-        super().setup(request, *args, **kwargs)
-        if 'sorting' in request.GET:
-            self.sorting()
-
-        self.queryset = self.get_queryset().annotate(num_modules=Count('modules'))
-
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['form'] =  SearchForm
-        return context
 
 
 class ContentOrderView(CsrfExemptMixin, JsonRequestResponseMixin, View):

@@ -2,11 +2,11 @@ from django.contrib import admin
 from django.urls import path, include
 from .views import ManageCourseListView, CourseCreateView, CourseUpdateView, \
 CourseDeleteView, CourseModuleUpdateView, ContentCreateUpdateView, ContentDeleteView, \
-ModuleContentListView, ModuleOrderView, ContentOrderView, CourseListView, CourseDetailView, \
+ModuleContentListView, ModuleOrderView, ContentOrderView, CourseDetailView, \
 CourseListSearchView, AddStarRating, AddReview, UpdateReview
 
 urlpatterns = [
-    path('', CourseListView.as_view() ,name = "course_list_all"),
+    path('', CourseListSearchView.as_view() ,name = "course_list_all"),
     path('add-rating/', AddStarRating.as_view() ,name = "course_add_rating"),
     path('add-review/', AddReview.as_view() ,name = "course_add_review"),
     path('detail/<slug:slug>/', CourseDetailView.as_view() ,name = "course_detail"),
