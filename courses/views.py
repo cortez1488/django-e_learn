@@ -85,7 +85,6 @@ class CourseFiltering():
 
     def filter_by_price(self, request):
         if request.GET.get('pr_lte') != '':
-            print(request.GET)
             self.queryset = self.queryset.filter(price__lte=int(request.GET.get('pr_lte')))
 
         if request.GET.get('pr_gte') != '':
@@ -113,39 +112,32 @@ class CourseListSortingContextMixin(CourseFiltering):
         return context
 
     def main(self, request, *args, **kwargs):
-
-        if 'subject' in kwargs:
-            self.by_subject(kwargs)
-
-        if 'search' in request.GET:
+        if request.GET != {}:
             self.searching(request, *args, **kwargs)
-
-        if 'sorting' in request.GET:
-            self.sorting()
-
-        if 'pr_lte' in  request.GET or 'pr_gte' in request.GET:
+            self.sorting(request)
             self.filtering(request)
-
+        self.by_subject(kwargs)
         self.number_annotation()
 
     def searching(self, request, *args, **kwargs):
-        self.search_str = request.GET.get('search')
-        tags = Tags.objects.filter(name__icontains=self.search_str)
-        self.queryset = self.get_queryset().filter(Q(name__icontains =      self.search_str) | \
-                                                   Q(overview__icontains =  self.search_str)| \
-                                                   Q(tags__in =[tag.id for tag in tags]))
-        self.extra_context.update({'search_string': self.search_str})
+            self.search_str = request.GET.get('search')
+            tags = Tags.objects.filter(name__icontains=self.search_str)
+            self.queryset = self.get_queryset().filter(Q(name__icontains =      self.search_str) | \
+                                                       Q(overview__icontains =  self.search_str)| \
+                                                       Q(tags__in =[tag.id for tag in tags]))
+            self.extra_context.update({'search_string': self.search_str})
 
 
     def by_subject(self, kwargs):
-        subject = get_object_or_404(Subject, slug=kwargs['subject'])
-        self.queryset = self.get_queryset().filter(subject=subject)
-        self.extra_context.update({'search_by_subject': subject.slug})
+        if 'subject' in kwargs:
+            subject = get_object_or_404(Subject, slug=kwargs['subject'])
+            self.queryset = self.get_queryset().filter(subject=subject)
+            self.extra_context.update({'search_by_subject': subject.slug})
 
-    def sorting(self):
-        sorting = self.request.GET.get('sorting')
-        if sorting != 'STNDRT':
-            self.queryset = self.get_queryset().order_by(self.sort_dict[sorting])
+    def sorting(self, request):
+            sorting = self.request.GET.get('sorting')
+            if sorting != 'STNDRT':
+                self.queryset = self.get_queryset().order_by(self.sort_dict[sorting])
 
 
     def number_annotation(self):
