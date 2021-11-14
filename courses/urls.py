@@ -3,11 +3,12 @@ from django.urls import path, include
 from .views import ManageCourseListView, CourseCreateView, CourseUpdateView, \
 CourseDeleteView, CourseModuleUpdateView, ContentCreateUpdateView, ContentDeleteView, \
 ModuleContentListView, ModuleOrderView, ContentOrderView, CourseDetailView, \
-CourseListSearchView, AddStarRating, AddReview, UpdateReview, JsonListView
+CourseListSearchView, AddStarRating, AddReview, UpdateReview, JsonListView, JSONTemplate
 
 urlpatterns = [
     path('', CourseListSearchView.as_view() ,name = "course_list_all"),
     path('json/', JsonListView, name="json_testing"),
+    path('testing/', JSONTemplate, name="testing"),
     path('add-rating/', AddStarRating.as_view() ,name = "course_add_rating"),
     path('add-review/', AddReview.as_view() ,name = "course_add_review"),
     path('detail/<slug:slug>/', CourseDetailView.as_view() ,name = "course_detail"),

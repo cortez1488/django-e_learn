@@ -12,12 +12,12 @@ from django.shortcuts import redirect, get_object_or_404
 from django.forms.models import modelform_factory
 from django.apps import apps
 from .models import Module, Content, Course, Subject, Rating, RatingStar, Review, Tags
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
+from django.template.response import TemplateResponse
 from .correct_title import correct_name
 from braces.views import CsrfExemptMixin, JsonRequestResponseMixin
 from django.db.models import Count
 from statistics import mean
-from django.http import JsonResponse
 from django.core.serializers import serialize
 # Create your views here.
 
@@ -317,3 +317,5 @@ def JsonListView(request):
         return HttpResponse("{'status':'ok'}")
 
 
+def JSONTemplate(requset):
+    return render(requset, 'index.html')

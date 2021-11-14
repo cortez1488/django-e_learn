@@ -8,7 +8,23 @@
     </div>
         <script>
             url = 'http://127.0.0.1:8000/course/json/'
-            console.log(document.cookie)
+                function getCookie(name) {
+                let cookieValue = null;
+
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        // Does this cookie string begin with the name we want?
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+            const csrftoken = getCookie('csrftoken');
 
             function sendRequest(method, url, body = null) {
                 return new Promise((resolve, reject) => {
@@ -16,7 +32,7 @@
                     xhr.open(method, url)
                     /*xhr.responseType = 'json'*/
                     if (method == 'POST'){
-                        xhr.setRequestHeader('X-CSRFToken', document.cookie.csrftoken)
+                        xhr.setRequestHeader('X-CSRFToken', csrftoken)
                     }
                     xhr.setRequestHeader('Content-Type', 'application/json')
                     xhr.send(body)
