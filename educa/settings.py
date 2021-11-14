@@ -41,12 +41,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'corsheaders',
     'embed_video',
     'crispy_forms',
     'crispy_bootstrap5',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -144,3 +146,18 @@ LOGIN_REDIRECT_URL = reverse_lazy('student_course_list')
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 
 CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+#CORS
+'''
+CORS_ALLOWED_ORIGINS = [
+    "http://127.0.0.1:8000",
+    'http://localhost:8080',
+
+]
+'''
+CORS_ALLOW_ALL_ORIGINS = True
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://127.0.0.1:8000/course/json/",
+    '/course/json/',
+]
