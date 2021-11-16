@@ -5,6 +5,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import User
 from django.template.loader import render_to_string
 from .fields import OrderField
+from autoslug import AutoSlugField
 # Create your models here.
 # Stars
 
@@ -65,7 +66,7 @@ class Subject(models.Model):
 
 class Course(models.Model):
     name = models.CharField(max_length=200)
-    slug = models.SlugField(max_length=200, unique=True)
+    slug = AutoSlugField(populate_from='name', unique=True)
 
     students = models.ManyToManyField(User, blank=True, related_name='courses_students')
     subject = models.ForeignKey(Subject, related_name='courses', on_delete=models.CASCADE)

@@ -19,6 +19,7 @@ from braces.views import CsrfExemptMixin, JsonRequestResponseMixin
 from django.db.models import Count
 from statistics import mean
 from django.core.serializers import serialize
+import json
 # Create your views here.
 
 
@@ -307,14 +308,25 @@ class CourseDeleteView(OwnerCourseMixin, DeleteView):
     permission_required = 'courses.delete_course'
 
 def JsonListView(request):
+
+    def normalLook(object):
+        subject = Subject.objects.get(id = object.pop('subject'))
+        owner = User.objects.get(id = object.pop('owner'))
+        return (subject, owner, object)
+
     if request.method == 'GET':
         courses = Course.objects.all()
         content = serialize('json', courses)
         response = HttpResponse(content)
         return response
     elif request.method == 'POST':
-        print(request.body)
-        return HttpResponse("{'status':'ok'}")
+        obj = normalLook(json.loads(request.body))
+        print((obj[2]))
+        course = Course.objects.create(subject = obj[0], owner = obj[1], **(obj[2]))
+        return HttpResponse(serialize('json', course))
+        #return HttpResponse('{"status":"ok"}')
+
+
 
 
 def JSONTemplate(requset):
