@@ -322,7 +322,7 @@ def JsonListView(request):
     elif request.method == 'POST':
         obj = normalLook(json.loads(request.body))
         print(obj)
-        course = Course.objects.create(subject = obj[0], owner = obj[1], **(obj[2]))
+        #course = Course.objects.create(subject = obj[0], owner = obj[1], **(obj[2]))
         #return HttpResponse(serialize('json', course))
         return HttpResponse('{"status":"ok"}')
 

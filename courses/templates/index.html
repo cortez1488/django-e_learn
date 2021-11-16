@@ -6,6 +6,9 @@
         <button class="get">GET</button>
         <button class="post">POST</button>
     </div>
+    <div class = "courses">
+        <h5 class = "course-name"></h5>
+    </div>
         <script>
             url = 'http://127.0.0.1:8000/course/json/'
                 function getCookie(name) {
@@ -43,12 +46,22 @@
             }
 
             let getFunc = () => {
-                sendRequest('GET', url).then(data => console.log(data)).catch(err => console.log(err))
+                sendRequest('GET', url).then(data => {
+                    console.log(typeof(data))
+                    for (course in data){
+                        console.log(course)
+                        nameJS = course['fields']['name']
+                        let name = document.querySelector('h5.course-name')
+                        name.innerHTML += nameJS
+                        }
+                }
+                ).catch(err => console.log(err))
             }
 
 
             body =  {
                     name: "speaking in russia",
+                    slug: "speaking-in-russua",
                     subject: 1,
                     owner: 2,
                     overview: "speaking russian course",
