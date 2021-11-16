@@ -66,7 +66,7 @@ class Subject(models.Model):
 
 class Course(models.Model):
     name = models.CharField(max_length=200)
-    slug = AutoSlugField(populate_from='name', unique=True)
+    slug = models.SlugField(max_length=200, unique=True)
 
     students = models.ManyToManyField(User, blank=True, related_name='courses_students')
     subject = models.ForeignKey(Subject, related_name='courses', on_delete=models.CASCADE)
