@@ -47,12 +47,11 @@
 
             let getFunc = () => {
                 sendRequest('GET', url).then(data => {
-                    console.log(typeof(data))
-                    for (course in data){
-                        console.log(course)
-                        nameJS = course['fields']['name']
+                    for (course of data){
+                        nameJS = course.fields.name
                         let name = document.querySelector('h5.course-name')
-                        name.innerHTML += nameJS
+                        console.log(nameJS)
+                        name.append(nameJS)
                         }
                 }
                 ).catch(err => console.log(err))
