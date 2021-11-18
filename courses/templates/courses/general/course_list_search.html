@@ -55,7 +55,7 @@
                        <a href="{% url "course_list_by_subject" subject.slug %}">{{ subject }}</a>
                     <p>
                         {{ course.num_modules }} modules.
-                        Instructor: {{ course.owner.get_full_name }}
+                        Instructor: {{ course.owner }}
                     </p>
                   </li>
               {% endwith %}
