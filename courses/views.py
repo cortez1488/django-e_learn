@@ -330,4 +330,4 @@ def JsonListView(request):
 
 
 def JSONTemplate(requset):
-    return render(requset, 'index.html')
+    return render(requset,  r'courses\general\index.html')

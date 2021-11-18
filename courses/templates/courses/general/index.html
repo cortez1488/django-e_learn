@@ -1,16 +1,43 @@
-<html>
-    <head>   
-    </head>
-    <div>
-        <input class = 'test' type="text" name="text">
-        <button class="get">GET</button>
-        <button class="post">POST</button>
-    </div>
-    <div class = "courses">
-        <h5 class = "course-name"></h5>
+{% extends "base.html" %}
+
+{% block title %}
+  JSON variant
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-4">
+                <input class = 'test' type="text" name="text">
+                <button class="get">GET</button>
+                <button class="post">POST</button>
+            </div>
+            <div class="col-4">
+                  <ul class="module list-group  text-left">
+                  </ul>
+            </div>
+        </div>
     </div>
         <script>
             url = 'http://127.0.0.1:8000/course/json/'
+
+                function getContent(course){
+                    return '<li class="list-group-item ">\n' +
+                            '                    <h4 class=\'\'>\n' +
+                            '                      <a href="#">\n' +
+                                                      course.fields.name + ' '  + course.fields.price + '\n' +
+                            '                      </a>\n' +
+                            '                    </h4>\n' +
+                            '                       <a href="#">' +
+                                                        'Rating: ' + course.fields.mean_rating + ' Created: ' + course.fields.created + '\n' +
+                            '                       </a>\n' +
+                            '                    <p>\n' +
+                            '                        /*nums modules*/ modules.\n' +
+                            '                        Instructor: /*instructor*/\n' +
+                            '                    </p>\n' +
+                            '                  </li>'
+                }
+
                 function getCookie(name) {
                 let cookieValue = null;
 
@@ -48,10 +75,11 @@
             let getFunc = () => {
                 sendRequest('GET', url).then(data => {
                     for (course of data){
-                        nameJS = course.fields.name
-                        let name = document.querySelector('h5.course-name')
-                        console.log(nameJS)
-                        name.append(nameJS)
+                        console.log(course)
+                        nameJS = course.fields.slug
+                        let content = getContent(course)
+                        let group = document.querySelector('ul.list-group')
+                        group.innerHTML += content
                         }
                 }
                 ).catch(err => console.log(err))
@@ -86,4 +114,4 @@
             })
 
         </script>
-</html>
+{% endblock %}
