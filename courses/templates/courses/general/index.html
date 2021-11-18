@@ -19,12 +19,12 @@
         </div>
     </div>
         <script>
-            url = 'http://127.0.0.1:8000/course/json/'
+            url = new URL('http://127.0.0.1:8000/course/json/')
 
                 function getContent(course){
                     return '<li class="list-group-item ">\n' +
                             '                    <h4 class=\'\'>\n' +
-                            '                      <a href="#">\n' +
+                            '                      <a class = ' + '"coursejson ' + course.pk + '"' +'href="">\n' +
                                                       course.fields.name + ' '  + course.fields.price + '\n' +
                             '                      </a>\n' +
                             '                    </h4>\n' +
@@ -74,14 +74,13 @@
 
             let getFunc = () => {
                 sendRequest('GET', url).then(data => {
+                    let group = document.querySelector('ul.list-group')
                     for (course of data){
-                        console.log(course)
-                        nameJS = course.fields.slug
+                        lastIdent = course.pk
+                        console.log(lastIdent)
                         let content = getContent(course)
-                        let group = document.querySelector('ul.list-group')
                         group.innerHTML += content
-                        }
-                }
+                }}
                 ).catch(err => console.log(err))
             }
 
