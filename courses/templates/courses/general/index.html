@@ -13,7 +13,21 @@
                 <button class="post">POST</button>
             </div>
             <div class="col-4">
-                  <ul class="module list-group  text-left">
+                  <ul class="module list-group text-left">
+                      {% for course in coursesFst %}
+                      <li class="list-group-item "  data-id ="{{ course.id }}" lastIdent = "">
+                          <h4 class=''>
+                          <a href="{% url "course_detail" course.slug %}" >
+                            {{ course.mean_rating }} {{ course.name }} {{ course.price }} {{ course.created }}
+                          </a>
+                        </h4>
+                           <a href="{% url "course_list_by_subject" course.subject.slug %}">{{ course.subject.name }}</a>
+                        <p>
+                            {{ course.num_modules }} modules.
+                            Instructor: {{ course.owner }}
+                        </p>
+                      </li>
+                      {% endfor %}
                   </ul>
             </div>
         </div>
@@ -22,20 +36,20 @@
             url = new URL('http://127.0.0.1:8000/course/json/')
 
                 function getContent(course){
-                    return '<li class="list-group-item ">\n' +
-                            '                    <h4 class=\'\'>\n' +
-                            '                      <a class = ' + '"coursejson ' + course.pk + '"' +'href="">\n' +
-                                                      course.fields.name + ' '  + course.fields.price + '\n' +
-                            '                      </a>\n' +
-                            '                    </h4>\n' +
-                            '                       <a href="#">' +
-                                                        'Rating: ' + course.fields.mean_rating + ' Created: ' + course.fields.created + '\n' +
-                            '                       </a>\n' +
-                            '                    <p>\n' +
-                            '                        /*nums modules*/ modules.\n' +
-                            '                        Instructor: /*instructor*/\n' +
-                            '                    </p>\n' +
-                            '                  </li>'
+                    return '<li class="list-group-item" data-id = '+'"'+course.pk+'"'+' lastIdent ="">\n' +
+                            '<h4 class=\'\'>\n' +
+                            '<a  href="">\n' +
+                             course.fields.name + ' '  + course.fields.price + '\n' +
+                            '</a>\n' +
+                            '</h4>\n' +
+                            '<a href="#">' +
+                             'Rating: ' + course.fields.mean_rating + ' Created: ' + course.fields.created + '\n' +
+                            '</a>\n' +
+                            '<p>\n' +
+                            '/*nums modules*/ modules.\n' +
+                            'Instructor: /*instructor*/\n' +
+                            '</p>\n' +
+                            '</li>'
                 }
 
                 function getCookie(name) {
@@ -56,11 +70,24 @@
             }
             const csrftoken = getCookie('csrftoken');
 
+            let searchParamsAttrWork = (url) => {
+                let lastidEl = document.querySelector('li[lastIdent]')
+                    if (lastidEl != null){
+                        lastid = lastidEl.getAttribute('data-id')
+                        lastIdAttrRemove(document.querySelectorAll('li[lastIdent]'))
+                        if (url.searchParams.has('lastId')){
+                            url.searchParams.delete('lastId')
+                        }
+                        url.searchParams.append('lastId', lastid)
+                        }
+
+            }
+
             function sendRequest(method, url, body = null) {
                 return new Promise((resolve, reject) => {
+                    searchParamsAttrWork(url)
                     xhr = new XMLHttpRequest();
                     xhr.open(method, url, true);
-                    /*xhr.responseType = 'json'*/
                     if (method == 'POST'){
                         xhr.setRequestHeader('X-CSRFToken', csrftoken);
                     }
@@ -71,15 +98,24 @@
                 })
 
             }
-
+            let lastIdAttrRemove = (elements) => {
+                for (element of elements){
+                    if (element.hasAttribute('lastIdent')){
+                        element.removeAttribute('lastIdent')
+                    }
+                }
+            }
             let getFunc = () => {
                 sendRequest('GET', url).then(data => {
                     let group = document.querySelector('ul.list-group')
-                    for (course of data){
-                        lastIdent = course.pk
-                        console.log(lastIdent)
-                        let content = getContent(course)
-                        group.innerHTML += content
+                    if (data.length == 0){
+                        group.innerHTML += 'Кончилось'
+                    }
+                    else{
+                        for (course of data){
+                            let content = getContent(course)
+                            group.innerHTML += content
+                            }
                 }}
                 ).catch(err => console.log(err))
             }
