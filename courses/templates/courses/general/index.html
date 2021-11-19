@@ -37,19 +37,19 @@
 
                 function getContent(course){
                     return '<li class="list-group-item" data-id = '+'"'+course.pk+'"'+' lastIdent ="">\n' +
-                            '                    <h4 class=\'\'>\n' +
-                            '                      <a  href="">\n' +
-                                                      course.fields.name + ' '  + course.fields.price + '\n' +
-                            '                      </a>\n' +
-                            '                    </h4>\n' +
-                            '                       <a href="#">' +
-                                                        'Rating: ' + course.fields.mean_rating + ' Created: ' + course.fields.created + '\n' +
-                            '                       </a>\n' +
-                            '                    <p>\n' +
-                            '                        /*nums modules*/ modules.\n' +
-                            '                        Instructor: /*instructor*/\n' +
-                            '                    </p>\n' +
-                            '                  </li>'
+                            '<h4 class=\'\'>\n' +
+                            '<a  href="">\n' +
+                             course.fields.name + ' '  + course.fields.price + '\n' +
+                            '</a>\n' +
+                            '</h4>\n' +
+                            '<a href="#">' +
+                             'Rating: ' + course.fields.mean_rating + ' Created: ' + course.fields.created + '\n' +
+                            '</a>\n' +
+                            '<p>\n' +
+                            '/*nums modules*/ modules.\n' +
+                            'Instructor: /*instructor*/\n' +
+                            '</p>\n' +
+                            '</li>'
                 }
 
                 function getCookie(name) {
@@ -70,13 +70,22 @@
             }
             const csrftoken = getCookie('csrftoken');
 
+            let searchParamsAttrWork = (url) => {
+                let lastidEl = document.querySelector('li[lastIdent]')
+                    if (lastidEl != null){
+                        lastid = lastidEl.getAttribute('data-id')
+                        lastIdAttrRemove(document.querySelectorAll('li[lastIdent]'))
+                        if (url.searchParams.has('lastId')){
+                            url.searchParams.delete('lastId')
+                        }
+                        url.searchParams.append('lastId', lastid)
+                        }
+
+            }
+
             function sendRequest(method, url, body = null) {
                 return new Promise((resolve, reject) => {
-                    let lastid = document.querySelector('li[lastIdent]').getAttribute('data-id')
-                    if (url.searchParams.has('lastId')){
-                        url.searchParams.delete('lastId')
-                    }
-                    url.searchParams.append('lastId', lastid)
+                    searchParamsAttrWork(url)
                     xhr = new XMLHttpRequest();
                     xhr.open(method, url, true);
                     if (method == 'POST'){
@@ -89,7 +98,6 @@
                 })
 
             }
-
             let lastIdAttrRemove = (elements) => {
                 for (element of elements){
                     if (element.hasAttribute('lastIdent')){
@@ -97,15 +105,17 @@
                     }
                 }
             }
-
             let getFunc = () => {
                 sendRequest('GET', url).then(data => {
                     let group = document.querySelector('ul.list-group')
-                    lastIdAttrRemove(document.querySelectorAll('li[lastIdent]'))
-                    console.log(document.querySelectorAll('li[lastIdent]'))
-                    for (course of data){
-                        let content = getContent(course)
-                        group.innerHTML += content
+                    if (data.length == 0){
+                        group.innerHTML += 'Кончилось'
+                    }
+                    else{
+                        for (course of data){
+                            let content = getContent(course)
+                            group.innerHTML += content
+                            }
                 }}
                 ).catch(err => console.log(err))
             }
