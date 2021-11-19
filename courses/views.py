@@ -315,7 +315,7 @@ def JsonListView(request):
         return (subject, owner, object)
 
     if request.method == 'GET':
-        courses = Course.objects.order_by('pk')[:1]
+        courses = Course.objects.order_by('pk').filter(pk__gt=request.GET['lastId'])[:1]
         content = serialize('json', courses)
         response = HttpResponse(content)
         return response
@@ -330,4 +330,5 @@ def JsonListView(request):
 
 
 def JSONTemplate(requset):
-    return render(requset,  r'courses\general\index.html')
+    courses = Course.objects.order_by('pk')[:1]
+    return render(requset,  r'courses\general\index.html', {'coursesFst':courses})
