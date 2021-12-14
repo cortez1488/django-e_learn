@@ -73,32 +73,37 @@
                   <div class="">
                     {% for review in reviews %}
                         {% if not review.parent %}
-                            <h5>{{ review.user }} {{ review.parent.user }}</h5>
-                            <p>{{ review.text }} {{ review.date }}</p>
-                            {% if review.grade %}
-                                <p>green</p>
-                            {% else %}
-                                <p>red</p>
-                            {% endif %}
+                            <div class="mt-3">
+                                <h5>{{ review.user }} </h5>
+                                <p class="ms-1">{{ review.text }} {{ review.date }}</p>
+                                {% if review.grade %}
+                                    <p class="ms-1">green</p>
+                                {% else %}
+                                    <p class="ms-1">red</p>
+                                {% endif %}
+                                {% if review.user == user %}
+                                    <a href="{% url 'review_update' review.pk %}">Исправить отзыв</a>
+                                {% endif %}
+                                <a href = "#formReview" onclick="addReview('{{ review.user }}', '{{ review.id }}')">Ответить</a>
+                            </div>
                             {% if review.childs != None %}
                                 {% for child in review.childs.all %}
-                                    <h5>{{ child.user }} </h5>
-                                    <p>{{ child.text }} {{ child.date }}</p>
-                                    {% if child.grade %}
-                                        <p>green</p>
-                                    {% else %}
-                                        <p>red</p>
-                                    {% endif %}
-                                    {% if child.user == user %}
-                                        <a href="{% url 'review_update' review.pk %}">Исправить отзыв</a>
-                                    {% endif %}
+                                    <div class="ms-5 mt-3">
+                                        <h5>{{ child.user }} </h5>
+                                        <p class="ms-1">{{ child.text }} {{ child.date }}</p>
+                                        {% if child.grade %}
+                                            <p class="ms-1">green</p>
+                                        {% else %}
+                                            <p class="ms-1">red</p>
+                                        {% endif %}
+                                        {% if child.user == user %}
+                                            <a href="{% url 'review_update' review.pk %}">Исправить отзыв</a>
+                                        {% endif %}
+                                    </div>
                                 {% endfor %}
                             {% endif %}
-                            {% if review.user == user %}
-                                <a href="{% url 'review_update' review.pk %}">Исправить отзыв</a>
-                            {% endif %}
-                            <a href = "#formReview" onclick="addReview('{{ review.user }}', '{{ review.id }}')">Ответить</a>
                         {% endif %}
+
                     {% endfor %}
                   </div>
               </div>
