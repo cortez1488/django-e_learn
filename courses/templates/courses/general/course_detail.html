@@ -59,9 +59,11 @@
           <div class="row">
             <div class="col-6">
               <div class="">
-                <form action="{% url 'course_add_review' %}" method="post">
+                <form action="{% url 'course_add_review' %}" method="post" id = "formReview">
                     {% csrf_token %}
-                    {{ review_form }}
+                    {{ review_form.text }}
+                    {{ review_form.grade }}
+                    <input type="hidden" name="parent" id="contactparent" value="">
                     <input type="hidden" name="course" value="{{ course.id }}">
                     <input class="" type="submit" value="Оставить отзыв">
                 </form>
@@ -70,15 +72,32 @@
               <div class="col-6">
                   <div class="">
                     {% for review in reviews %}
-                        <h5>{{ review.user }}</h5>
-                        <p>{{ review.text }} {{ review.date }}</p>
-                        {% if review.grade %}
-                            <h5>green</h5>
-                        {% else %}
-                            <h5>red</h5>
-                        {% endif %}
-                        {% if review.user == user %}
-                            <a href="{% url 'review_update' review.pk %}">Исправить отзыв</a>
+                        {% if not review.parent %}
+                            <h5>{{ review.user }} {{ review.parent.user }}</h5>
+                            <p>{{ review.text }} {{ review.date }}</p>
+                            {% if review.grade %}
+                                <p>green</p>
+                            {% else %}
+                                <p>red</p>
+                            {% endif %}
+                            {% if review.childs != None %}
+                                {% for child in review.childs.all %}
+                                    <h5>{{ child.user }} </h5>
+                                    <p>{{ child.text }} {{ child.date }}</p>
+                                    {% if child.grade %}
+                                        <p>green</p>
+                                    {% else %}
+                                        <p>red</p>
+                                    {% endif %}
+                                    {% if child.user == user %}
+                                        <a href="{% url 'review_update' review.pk %}">Исправить отзыв</a>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                            {% if review.user == user %}
+                                <a href="{% url 'review_update' review.pk %}">Исправить отзыв</a>
+                            {% endif %}
+                            <a href = "#formReview" onclick="addReview('{{ review.user }}', '{{ review.id }}')">Ответить</a>
                         {% endif %}
                     {% endfor %}
                   </div>
@@ -95,4 +114,10 @@
           </div>
         </div>
       </section>
+    <script>
+        function addReview(name, id) {
+            document.querySelector("input[id=contactparent]").value = id
+            document.querySelector("textarea[name=text]").innerHTML = `${name}, `
+        }
+    </script>
 {% endblock %}
