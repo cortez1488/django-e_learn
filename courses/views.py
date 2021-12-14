@@ -39,6 +39,10 @@ class AddReview(View):
         form = ReviewForm(request.POST)
         if form.is_valid():
             review = form.save(commit=False)
+            print(request.POST)
+            if request.POST.get('parent') != '':
+                parent = Review.objects.get(id=int(request.POST.get('parent')))
+                review.parent = parent
             review.user = request.user
             review.course = course
             review.save()
