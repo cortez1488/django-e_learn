@@ -29,6 +29,7 @@
                 {% csrf_token %}
                 <input type="submit" value="Enroll now">
             </form>
+        <a href="{% url 'product_add' course.id %}" class ="button">Add to cart</a>
         {% else %}
             <a href="{% url 'registration' %}" class ="button">Register to enroll</a>
         {% endif %}
