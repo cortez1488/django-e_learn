@@ -10,7 +10,8 @@ class Cart():
             yield item
 
     def add(self, id):
-        self.cart.append(id)
+        if not id in self.cart:
+            self.cart.append(id)
         self.save()
 
     def save(self):

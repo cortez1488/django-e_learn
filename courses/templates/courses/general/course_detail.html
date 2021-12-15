@@ -29,7 +29,7 @@
                 {% csrf_token %}
                 <input type="submit" value="Enroll now">
             </form>
-        <a href="{% url 'product_add' course.id %}" class ="button">Add to cart</a>
+        <a href="#" href_data="{% url 'product_add' course.id %}" class="button js-data">Add to cart</a>
         {% else %}
             <a href="{% url 'registration' %}" class ="button">Register to enroll</a>
         {% endif %}
@@ -121,9 +121,38 @@
         </div>
       </section>
     <script>
+
         function addReview(name, id) {
             document.querySelector("input[id=contactparent]").value = id
             document.querySelector("textarea[name=text]").innerHTML = `${name}, `
         }
+
+        url = 'http://127.0.0.1:8000'
+        let button = document.querySelector('a.js-data')
+        url = url+button.getAttribute("href_data")
+
+        function sendRequest(method, url, body = null) {
+            return new Promise((resolve, reject) => {
+                xhr = new XMLHttpRequest()
+                xhr.open(method, url)
+                console.log(xhr)
+                xhr.send()
+                xhr.onerror = () => reject('--error--')
+                xhr.onload = () => {
+                    alert('Добавлено в корзину')
+                    resolve(xhr.response)
+                }
+	        })
+        }
+
+        let addToCartUrlActivate = () => {
+            console.log('something work', url)
+	        sendRequest('GET', url).then(data => console.log(data)).catch(err => alert('Что-то пошло не так', err))
+        }
+
+
+        button.addEventListener('click', () => {
+            addToCartUrlActivate()
+        })
     </script>
 {% endblock %}
