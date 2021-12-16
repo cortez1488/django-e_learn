@@ -29,7 +29,10 @@
                 {% csrf_token %}
                 <input type="submit" value="Enroll now">
             </form>
-        <a href="#" href_data="{% url 'product_add' course.id %}" class="button js-data">Add to cart</a>
+            <a href="#" href_data="{% url 'product_add' course.id %}" class="button js-data">Add to cart</a>
+            {% for msg in messages %}
+                {{ msg }}
+            {% endfor %}
         {% else %}
             <a href="{% url 'registration' %}" class ="button">Register to enroll</a>
         {% endif %}
@@ -139,7 +142,6 @@
                 xhr.send()
                 xhr.onerror = () => reject('--error--')
                 xhr.onload = () => {
-                    alert('Добавлено в корзину')
                     resolve(xhr.response)
                 }
 	        })

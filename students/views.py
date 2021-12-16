@@ -1,7 +1,5 @@
-from django.shortcuts import render
 from django.views.generic import CreateView, ListView, DetailView
-from django.views.generic.edit import FormView, BaseFormView, FormMixin
-from django.views.generic import View
+from django.views.generic.edit import BaseFormView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import CourseEnrollForm
 from django.contrib.auth.forms import UserCreationForm
