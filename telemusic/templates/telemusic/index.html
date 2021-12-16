@@ -1,9 +1,16 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <form action="{% url '' %}" method = "post">
-                {{ enrollform }}
+    <form action="{% url 'music_upload' %}" method = "post" enctype="multipart/form-data">
+                {{ upload_form }}
                 {% csrf_token %}
-                <input type="submit" value="Enroll now">
+                <input type="submit" value="Загрузить">
     </form>
+    <div>
+        {% for music in queryset %}
+            <a href="#">
+                <h5>{{ music.name }}</h5>
+            </a>
+        {% endfor %}
+    </div>
 {% endblock %}

@@ -4,7 +4,7 @@ from django.views.generic import TemplateView
 from django.http import HttpResponse
 from .service import handle_uploaded_file
 from .forms import UploadFileForm
-
+from .models import Music
 # Create your views here.
 
 class Download(View):
@@ -15,7 +15,9 @@ class Upload(View):
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
             handle_uploaded_file(request.FILES['file'])
-            return HttpResponse(status=201)
+            return HttpResponse('Загружено, братан!', status=201)
+        return HttpResponse(status=400)
 
 class Main(TemplateView):
     template_name = 'telemusic/index.html'
+    extra_context = {'upload_form':UploadFileForm, 'queryset':Music.objects.all() }
