@@ -8,9 +8,12 @@
     </form>
     <div>
         {% for music in queryset %}
-            <a href="#">
-                <h5>{{ music.name }}</h5>
-            </a>
+            <form action="{% url 'music_download' %}" method="get">
+                {% csrf_token %}
+                <input name="path" type="hidden" value="{{ music.path }}">
+                <input name="name" type="hidden" value="{{ music.name }}">
+                <button type="submit">{{ music.name }}</button>
+            </form>
         {% endfor %}
     </div>
 {% endblock %}
