@@ -24,3 +24,5 @@ class Upload(View):
 class Main(TemplateView):
     template_name = 'telemusic/index.html'
     extra_context = {'upload_form':UploadFileForm, 'queryset':Music.objects.all() }
+
+
