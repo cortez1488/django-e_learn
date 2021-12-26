@@ -22,7 +22,10 @@ def get_music_to_download(update, context):
     con.commit()
     con.close()
 
-    context.bot.send_audio(chat_id=update.effective_chat.id, filename=music[0], audio=open(music[1], 'rb'), timeout=20)
+    try:
+        context.bot.send_audio(chat_id=update.effective_chat.id, filename=music[0], audio=open(music[1], 'rb'), timeout=20)
+    except:
+        context.bot.send_message(chat_id=update.effective_chat.id, text='Попробуйте еще раз...')
 
 def select_all_music_db():
     con = sqlite3.connect(r"C:/Users/abhda/Desktop/djnago/e_learn/djangoenv/env/educa/db.sqlite3")
