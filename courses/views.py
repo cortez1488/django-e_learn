@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.views.generic.list import ListView
-from django.views.generic import CreateView, DetailView, UpdateView, DeleteView, FormView, UpdateView
-from django.urls import reverse_lazy, reverse
+from django.views.generic import CreateView, DetailView, DeleteView, UpdateView
+from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.models import User
 from django.db.models import Q
@@ -11,9 +11,8 @@ from django.views.generic.base import TemplateResponseMixin, View
 from django.shortcuts import redirect, get_object_or_404
 from django.forms.models import modelform_factory
 from django.apps import apps
-from .models import Module, Content, Course, Subject, Rating, RatingStar, Review, Tags
-from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
-from django.template.response import TemplateResponse
+from .models import Module, Content, Course, Subject, Rating, Review, Tags
+from django.http import HttpResponseRedirect, HttpResponse
 from .correct_title import correct_name
 from braces.views import CsrfExemptMixin, JsonRequestResponseMixin
 from django.db.models import Count

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <form action="{% url 'music_upload' %}" method = "post" enctype="multipart/form-data">
+                {{ upload_form }}
+                {% csrf_token %}
+                <input type="submit" value="Загрузить">
+    </form>
+    <div>
+        {% for music in queryset %}
+            <form action="{% url 'music_download' %}" method="get">
+                {% csrf_token %}
+                <input name="path" type="hidden" value="{{ music.path }}">
+                <input name="name" type="hidden" value="{{ music.name }}">
+                <button type="submit">{{ music.name }}</button>
+            </form>
+        {% endfor %}
+    </div>
+{% endblock %}

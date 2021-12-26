@@ -2,6 +2,8 @@
 
 {% block content %}
     {% for item in queryset %}
-        <h5>{{ item.name }} {{ item.price }}</h5>
+        <a href="{% url 'course_detail' item.slug %}">
+            <h5>{{ item.name }} {{ item.price }}</h5>
+        </a>
     {% endfor %}
 {% endblock %}
