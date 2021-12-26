@@ -23,6 +23,12 @@ class Upload(View):
 
 class Main(TemplateView):
     template_name = 'telemusic/index.html'
-    extra_context = {'upload_form':UploadFileForm, 'queryset':Music.objects.all() }
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['queryset'] = Music.objects.all()
+        context['upload_form'] = UploadFileForm
+        return context
+
 
 
