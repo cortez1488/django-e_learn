@@ -14,33 +14,84 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 updater = Updater(token=bot_config.BOT_TOKEN)
 dispatcher = updater.dispatcher
 
-def insert_into_db(first_name, username, chat_id, ident_id):
-    print(first_name, username, chat_id)
+def get_music_to_download(update, context):
     con = sqlite3.connect(r"C:/Users/abhda/Desktop/djnago/e_learn/djangoenv/env/educa/db.sqlite3")
     cursor = con.cursor()
-    cursor.execute("""insert into telemusic_telegramuser (first_name, username, chat_id, ident_id) values (?, ?, ?, ?)""", (first_name, username, chat_id, ident_id))
+    cursor.execute('select name, path from telemusic_music where id = ?', (update.message.text, ))
+    music = cursor.fetchall()[0]
     con.commit()
     con.close()
+
+    context.bot.send_audio(chat_id=update.effective_chat.id, filename=music[0], audio=open(music[1], 'rb'))
+
+def select_all_music_db():
+    con = sqlite3.connect(r"C:/Users/abhda/Desktop/djnago/e_learn/djangoenv/env/educa/db.sqlite3")
+    cursor = con.cursor()
+    cursor.execute('select id, name from telemusic_music')
+    massive = [music for music in cursor.fetchall()]
+    con.commit()
+    con.close()
+    print(massive)
+    return massive
+
+def get_music(update, context):
+    massive_data = select_all_music_db()
+
+    keys = [KeyboardButton(text = music[0]) for music in massive_data]
+    reply_markup = ReplyKeyboardMarkup(keyboard=[keys], resize_keyboard=True)
+
+    result = ''
+    for music in massive_data:
+        result += str(music[0]) + '. ' + str(music[1]) + '\n'
+
+    context.bot.send_message(chat_id=update.effective_chat.id, text=result, reply_markup=reply_markup)
+    context.bot.send_message(chat_id=update.effective_chat.id, text='Выберите музыку из предложенных, написав цифру')
+
+
+
+def insert_into_db(first_name, username, chat_id, ident_id):
+    con = sqlite3.connect(r"C:/Users/abhda/Desktop/djnago/e_learn/djangoenv/env/educa/db.sqlite3")
+    cursor = con.cursor()
+    cursor.execute('select * from telemusic_telegramuser where chat_id = ?', (chat_id, ))
+    if not cursor.fetchall():
+        cursor.execute("""insert into telemusic_telegramuser (first_name, username, chat_id, ident_id) values (?, ?, ?, ?)""", (first_name, username, chat_id, ident_id))
+        flag = True
+    else:
+        flag = False
+    con.commit()
+    con.close()
+    return flag
 
 def create(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id,
                              text='Попытка регистрации')
-    insert_into_db(first_name=update.effective_user.first_name, username=update.effective_user.username,
+    flag = insert_into_db(first_name=update.effective_user.first_name, username=update.effective_user.username,
                    chat_id=update.effective_chat.id, ident_id=update.effective_user.id)
 
     reply_markup = ReplyKeyboardRemove(keyboard=[[KeyboardButton(text='Регистрация')]], resize_keyboard=True)
-    context.bot.send_message(chat_id=update.effective_chat.id,
+
+    if flag: context.bot.send_message(chat_id=update.effective_chat.id,
                                   text='Регистрация под своим же именем ' + str(update.effective_user.first_name), reply_markup=reply_markup)
+    else: context.bot.send_message(chat_id=update.effective_chat.id,
+                                  text='Вы уже в системе под своим же именем ' + str(update.effective_user.first_name), reply_markup=reply_markup)
 
 def start(update: telegram.Update, context: CallbackContext):
-    reply_markup = ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text='Регистрация')]], resize_keyboard=True)
+    reply_markup = ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text='Регистрация'), KeyboardButton(text='Список музыки')]], resize_keyboard=True)
     context.bot.send_message(chat_id=update.effective_chat.id, text="Привет, ты можешь зарегестрироваться", reply_markup=reply_markup)
 
 def message(update, context):
     print(update.message.text)
-    if update.message.text == 'Регистрация':
+
+    if update.message.text.isdecimal():
+        get_music_to_download(update, context)
+
+    elif update.message.text == 'Регистрация':
         create(update, context)
+
+    elif update.message.text == 'Список музыки':
+        get_music(update, context)
     else: context.bot.send_message(chat_id = update.effective_chat.id, text = update.message.text)
+
 
 def main_handler():
     start_handler = CommandHandler('start', start)
