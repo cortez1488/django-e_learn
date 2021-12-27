@@ -14,13 +14,18 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 def upload_by_chat_to_db(music_file, name):
     con = sqlite3.connect(r"C:/Users/abhda/Desktop/djnago/e_learn/djangoenv/env/educa/db.sqlite3")
     cursor = con.cursor()
-
-    path = bot_config.MUSIC_STORAGE_PATH + name
-    music_file.download(custom_path = path)
-
-    cursor.execute('insert into telemusic_music (name, path) values (?, ?)', (name, path))
+    cursor.execute('select * from telemusic_music where name = ?', (name,))
+    if not cursor.fetchall():
+        path = bot_config.MUSIC_STORAGE_PATH + name
+        music_file.download(custom_path = path)
+        cursor.execute('insert into telemusic_music (name, path) values (?, ?)', (name, path))
+        con.commit()
+        con.close()
+        return True
     con.commit()
     con.close()
+    return False
+
 
 def get_music_to_download(update, context):
     con = sqlite3.connect(r"C:/Users/abhda/Desktop/djnago/e_learn/djangoenv/env/educa/db.sqlite3")
@@ -98,8 +103,11 @@ def start(update: telegram.Update, context: CallbackContext):
 
 def message(update, context):
     if update.message.audio:
-        upload_by_chat_to_db(update.message.audio.get_file(), update.message.audio.file_name)
-    else:print('2')
+        if upload_by_chat_to_db(update.message.audio.get_file(), update.message.audio.file_name):
+            context.bot.send_message(chat_id = update.effective_chat.id, text = 'Файл загружен')
+        else:
+            context.bot.send_message(chat_id=update.effective_chat.id, text='Файл уже существует')
+
 
     if update.message.text:
         if update.message.text.isdecimal():
