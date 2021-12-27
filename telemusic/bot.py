@@ -11,8 +11,16 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
                      level=logging.INFO)
 
 
-updater = Updater(token=bot_config.BOT_TOKEN)
-dispatcher = updater.dispatcher
+def upload_by_chat_to_db(music_file, name):
+    con = sqlite3.connect(r"C:/Users/abhda/Desktop/djnago/e_learn/djangoenv/env/educa/db.sqlite3")
+    cursor = con.cursor()
+
+    path = bot_config.MUSIC_STORAGE_PATH + name
+    music_file.download(custom_path = path)
+
+    cursor.execute('insert into telemusic_music (name, path) values (?, ?)', (name, path))
+    con.commit()
+    con.close()
 
 def get_music_to_download(update, context):
     con = sqlite3.connect(r"C:/Users/abhda/Desktop/djnago/e_learn/djangoenv/env/educa/db.sqlite3")
@@ -89,24 +97,32 @@ def start(update: telegram.Update, context: CallbackContext):
         context.bot.send_message(chat_id=update.effective_chat.id, text="Здравствуй, " + str(update.effective_user.first_name), reply_markup=reply_markup)
 
 def message(update, context):
+    if update.message.audio:
+        upload_by_chat_to_db(update.message.audio.get_file(), update.message.audio.file_name)
+    else:print('2')
 
-    if update.message.text.isdecimal():
-        get_music_to_download(update, context)
+    if update.message.text:
+        if update.message.text.isdecimal():
+            get_music_to_download(update, context)
 
-    elif update.message.text == 'Регистрация':
-        create(update, context)
+        elif update.message.text == 'Регистрация':
+            create(update, context)
 
-    elif update.message.text == 'Список музыки':
-        get_music(update, context)
-    else: context.bot.send_message(chat_id = update.effective_chat.id, text = update.message.text)
+        elif update.message.text == 'Список музыки':
+            get_music(update, context)
+        else:
+            context.bot.send_message(chat_id = update.effective_chat.id, text = update.message.text)
 
 
 def main_handler():
+    updater = Updater(token=bot_config.BOT_TOKEN)
+    dispatcher = updater.dispatcher
+
     start_handler = CommandHandler('start', start)
     message_handler = MessageHandler(Filters.update, message)
+
     dispatcher.add_handler(start_handler)
     dispatcher.add_handler(message_handler)
-
 
     updater.start_polling()
 
