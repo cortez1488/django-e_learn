@@ -16,10 +16,11 @@ class Download(View):
 
 class Upload(View):
     def post(self, request):
-        print(request.FILES)
         if request.FILES != []:
-             handle_uploaded_file(request.FILES['music'])
-             return HttpResponse(status=201)
+             if handle_uploaded_file(request.FILES['music']):
+                return HttpResponse(status=201)
+             else:
+                 return HttpResponse(status=200)
         return HttpResponse(status=400)
 
 class Main(TemplateView):

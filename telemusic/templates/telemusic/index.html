@@ -47,13 +47,14 @@
                     xhr = new XMLHttpRequest();
                     xhr.open('POST', url, true);
                     xhr.setRequestHeader('X-CSRFToken', csrftoken);
-                    //xhr.setRequestHeader('Content-Type', "multipart/form-data; boundary=63c5979328c44e2c869349443a94200e");
                     xhr.send(formData);
-                    console.log('after send')
-                    alert('sended')
-                })
 
-            }
+                    xhr.onload = () => {
+                        alert('Отправлено')
+                }
+
+            })
+        }
 
         function uploadFunc(){
             music = document.querySelector('#id_file').files[0]
